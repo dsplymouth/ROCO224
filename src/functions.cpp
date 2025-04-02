@@ -56,3 +56,32 @@ void zeroAllMotors(ServoConfig servos[]) {
   moveServoToAngle(servos[3], 0);    // Wrist
   moveServoToAngle(servos[4], 180); // Gripper
 }
+
+//Functions for movement
+void MoveForward(ServoConfig servos[]) {
+  Serial.println("Command: Move Forward");
+  moveServoToAngle(servos[1], servos[1].targetAngle - 5); // Shoulder
+  moveServoToAngle(servos[2], servos[2].targetAngle + 5); // Elbow
+}
+
+void MoveBackward(ServoConfig servos[]) {
+  Serial.println("Command: Move Backward");
+  moveServoToAngle(servos[1], servos[1].targetAngle + 5); // Shoulder
+  moveServoToAngle(servos[2], servos[2].targetAngle - 5); // Elbow
+}
+
+void RotateWrist(ServoConfig servos[]) {
+  Serial.println("Command: Rotate Wrist");
+  moveServoToAngle(servos[3], servos[3].targetAngle + 10); // Wrist rotation
+}
+
+void ToggleGripper(ServoConfig servos[]) {
+  Serial.println("Command: Toggle Gripper");
+  static bool open = false;
+  open = !open;
+  if (open) {
+    moveServoToAngle(servos[4], 180); // Open
+  } else {
+    moveServoToAngle(servos[4], 0);   // Close
+  }
+}

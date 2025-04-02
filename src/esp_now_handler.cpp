@@ -10,16 +10,27 @@ extern ServoConfig servos[];
 
 // Callback function for incoming ESP-NOW messages
 void onDataRecv(const uint8_t *mac, const uint8_t *incomingData, int len) {
-    // Copy incoming data into the `receivedData` structure
     memcpy(&receivedData, incomingData, sizeof(receivedData));
-
-    // Print the received number to confirm connection
     Serial.print("Received number: ");
     Serial.println(receivedData.number);
 
-    // Optional: Use the received number for further processing
-    // For example, move a specific servo based on the number:
-    
+    switch (receivedData.number) {
+      case 1:
+        MoveForward(servos);
+        break;
+      case 2:
+        MoveBackward(servos);
+        break;
+      case 3:
+        RotateWrist(servos);
+        break;
+      case 4:
+        ToggleGripper(servos);
+        break;
+      default:
+        Serial.println("Unknown command.");
+        break;
+    }
 }
 
 // Initializes ESP-NOW communication

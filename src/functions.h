@@ -22,4 +22,12 @@ void moveServoToAngle(ServoConfig &servo, int angle);
 void updateServos(ServoConfig servos[], uint8_t count);
 void zeroAllMotors(ServoConfig servos[]);
 
+
+//Funcitons for movement
+void MoveForward(ServoConfig servos[]);
+void MoveBackward(ServoConfig servos[]);
+void RotateWrist(ServoConfig servos[]);
+void ToggleGripper(ServoConfig servos[]);
+
+
 #endif
