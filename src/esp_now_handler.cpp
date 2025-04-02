@@ -2,7 +2,7 @@
 #include <WiFi.h>
 #include "functions.h"
 
-// Struct for received servo data
+/*// Struct for received servo data
 typedef struct {
     uint8_t servo;
     int angle;
@@ -34,4 +34,4 @@ void initializeESPNow() {
     }
     esp_now_register_recv_cb(onDataRecv);
     Serial.println("ESP-NOW Receiver Initialized.");
-}
+}*/

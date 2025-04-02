@@ -1,17 +1,25 @@
 #ifndef FUNCTIONS_H
 #define FUNCTIONS_H
 
+#include <Adafruit_PWMServoDriver.h>
 #include <Arduino.h>
 
-// Define number of servos
-#define NUM_SERVOS 3
+extern Adafruit_PWMServoDriver pwm;
 
-// Function declarations
-void initializeServos();
-void moveServoInstant(uint8_t servo, int angle);
-void moveServoSmooth(uint8_t servo, int startAngle, int endAngle, int stepDelay);
-void zeroServos();
+struct ServoConfig {
+  uint8_t channel;
+  int minAngle;
+  int maxAngle;
+  int currentAngle;
+  int targetAngle;
+  int stepAngle;
+  unsigned long lastUpdate;
+  uint16_t updateInterval;
+};
 
-extern int homePositions[NUM_SERVOS];  // Declare home positions
+uint16_t angleToPWM(int angle);
+void moveServoToAngle(ServoConfig &servo, int angle);
+void updateServos(ServoConfig servos[], uint8_t count);
+void zeroAllMotors(ServoConfig servos[]);
 
-#endif  // FUNCTIONS_H
+#endif

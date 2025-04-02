@@ -2,62 +2,57 @@
 #include <Wire.h>
 #include <Adafruit_PWMServoDriver.h>
 
-// Create PCA9685 instance
-Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
+extern Adafruit_PWMServoDriver pwm;
 
-// MG996R specific values
-#define SERVOMIN  200   // 500µs
-#define SERVOMAX  600   // 2500µs
-#define SERVO_FREQ 40   // 50Hz update rate
-
-// Define zero positions for each servo
-int homePositions[NUM_SERVOS] = {60, 40, 60};  // ✅ Ensure semicolon
-int limits[NUM_SERVOS][2] = {{0, 180}, {40, 150}, {0, 120}};
-  // Limits for each servo
-
-void initializeServos() {
-    pwm.begin();
-    pwm.setOscillatorFrequency(29000000);
-    pwm.setPWMFreq(SERVO_FREQ);
-    delay(10);
-}
-void moveServoInstant(uint8_t servo, int angle) {
-    // Ensure angle is within the valid range
-    if (angle < 0) angle = 0;
-    if (angle > 180) angle = 180;
-
-    int pulselen = map(angle, 0, 180, SERVOMIN, SERVOMAX);  // Map angle to pulse length
-    pwm.setPWM(servo, 0, pulselen);  // Move the servo to the mapped pulse length
+uint16_t angleToPWM(int angle) {
+  angle = constrain(angle, 0, 180);
+  float pulseMicros = map(angle, 0, 180, 500, 2500);
+  return (uint16_t)((pulseMicros / 20000.0) * 4096);
 }
 
-void moveServoSmooth(uint8_t servo, int startAngle, int endAngle, int stepDelay) {
-    // Ensure start and end angles are within limits
-    if (startAngle < 0) startAngle = 0;
-    if (startAngle > 180) startAngle = 180;
-    if (endAngle < 0) endAngle = 0;
-    if (endAngle > 180) endAngle = 180;
+void moveServoToAngle(ServoConfig &servo, int angle) {
+  servo.targetAngle = constrain(angle, servo.minAngle, servo.maxAngle);
+  Serial.print("Setting servo on channel ");
+  Serial.print(servo.channel);
+  Serial.print(" to ");
+  Serial.print(servo.targetAngle);
+  Serial.println(" degrees.");
+}
 
-    // Move from start angle to end angle smoothly
-    if (startAngle > endAngle) {
-        for (int angle = startAngle; angle >= endAngle; angle--) {
-            moveServoInstant(servo, angle);
-            delay(stepDelay);
+void updateServos(ServoConfig servos[], uint8_t count) {
+  unsigned long now = millis();
+  for (uint8_t i = 0; i < count; i++) {
+    ServoConfig &s = servos[i];
+    if (now - s.lastUpdate >= s.updateInterval) {
+      if (s.currentAngle != s.targetAngle) {
+        if (s.currentAngle < s.targetAngle) {
+          s.currentAngle += s.stepAngle;
+          if (s.currentAngle > s.targetAngle)
+            s.currentAngle = s.targetAngle;
+        } else if (s.currentAngle > s.targetAngle) {
+          s.currentAngle -= s.stepAngle;
+          if (s.currentAngle < s.targetAngle)
+            s.currentAngle = s.targetAngle;
         }
-    } else {
-        for (int angle = startAngle; angle <= endAngle; angle++) {
-            moveServoInstant(servo, angle);
-            delay(stepDelay);
-        }
+
+        Serial.print("Moving servo ");
+        Serial.print(s.channel);
+        Serial.print(" to ");
+        Serial.print(s.currentAngle);
+        Serial.println(" degrees");
+      }
+
+      pwm.setPWM(s.channel, 0, angleToPWM(s.currentAngle));
+      s.lastUpdate = now;
     }
+  }
 }
 
-
-// Move all servos to their zero (home) positions
-void zeroServos() {
-    Serial.println("Zeroing all servos...");
-    for (uint8_t servo = 0; servo < NUM_SERVOS; servo++) {
-        moveServoSmooth(servo, 0, homePositions[servo], 24);  // Move smoothly to home position
-        delay(100);  // Small delay between servos
-    }
-    Serial.println("All servos zeroed.");
+void zeroAllMotors(ServoConfig servos[]) {
+  Serial.println("Zeroing all motors...");
+  moveServoToAngle(servos[0], 90);   // Base
+  moveServoToAngle(servos[1], 90);   // Shoulder
+  moveServoToAngle(servos[2], 180);  // Elbow
+  moveServoToAngle(servos[3], 0);    // Wrist
+  moveServoToAngle(servos[4], 0);    // Gripper
 }
