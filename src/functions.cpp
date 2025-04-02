@@ -51,8 +51,8 @@ void updateServos(ServoConfig servos[], uint8_t count) {
 void zeroAllMotors(ServoConfig servos[]) {
   Serial.println("Zeroing all motors...");
   moveServoToAngle(servos[0], 90);   // Base
-  moveServoToAngle(servos[1], 90);   // Shoulder
-  moveServoToAngle(servos[2], 180);  // Elbow
+  moveServoToAngle(servos[1], 160);   // Shoulder //lowest 22
+  moveServoToAngle(servos[2], 22);  // Elbow 20 Lowest Highest 163
   moveServoToAngle(servos[3], 0);    // Wrist
-  moveServoToAngle(servos[4], 0);    // Gripper
+  moveServoToAngle(servos[4], 180); // Gripper
 }
