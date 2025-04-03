@@ -52,8 +52,8 @@ void zeroAllMotors(ServoConfig servos[]) {
   Serial.println("Zeroing all motors...");
   moveServoToAngle(servos[0], 90);   // Base
   moveServoToAngle(servos[1], 160);   // Shoulder //lowest 22
-  moveServoToAngle(servos[2], 22);  // Elbow 20 Lowest Highest 163
-  moveServoToAngle(servos[3], 0);    // Wrist
+  moveServoToAngle(servos[2], 25);  // Elbow 20 Lowest Highest 163
+  moveServoToAngle(servos[3], 180);    // Wrist
   moveServoToAngle(servos[4], 180); // Gripper
 }
 
@@ -72,7 +72,7 @@ void MoveBackward(ServoConfig servos[]) {
 
 void RotateWrist(ServoConfig servos[]) {
   Serial.println("Command: Rotate Wrist");
-  moveServoToAngle(servos[3], servos[3].targetAngle + 10); // Wrist rotation
+  moveServoToAngle(servos[3], servos[3].targetAngle + 180); // Wrist rotation
 }
 
 void ToggleGripper(ServoConfig servos[]) {
@@ -84,4 +84,9 @@ void ToggleGripper(ServoConfig servos[]) {
   } else {
     moveServoToAngle(servos[4], 0);   // Close
   }
+}
+
+void RotateWristReverse(ServoConfig servos[]){
+  Serial.println("Command: Rotate Wrist (Reverse)");
+  moveServoToAngle(servos[3], servos[3].targetAngle - 180);
 }

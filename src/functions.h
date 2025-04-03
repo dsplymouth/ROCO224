@@ -28,6 +28,6 @@ void MoveForward(ServoConfig servos[]);
 void MoveBackward(ServoConfig servos[]);
 void RotateWrist(ServoConfig servos[]);
 void ToggleGripper(ServoConfig servos[]);
-
+void RotateWristReverse(ServoConfig servos[]);
 
 #endif

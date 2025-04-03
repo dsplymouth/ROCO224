@@ -18,7 +18,7 @@ ServoConfig servos[servoCount] = {
   {1, 22, 180, 90, 160, 1, 0, 20},  // Shoulder
   {2, 20, 163, 163, 22, 1, 0, 20}, // Elbow
   {3, 0, 180, 0, 0, 1, 0, 20},     // Wrist
-  {4, 0, 180, 0, 0, 1, 0, 20}       // Gripper
+  {4, 70, 180, 0, 0, 1, 0, 20}       // Gripper
 };
 
 // Calibration settings
@@ -61,5 +61,5 @@ void setup() {
 
 void loop() {
   updateServos(servos, servoCount);
-  delay(10);
+  delay(2);
 }

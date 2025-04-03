@@ -25,6 +25,9 @@ void onDataRecv(const uint8_t *mac, const uint8_t *incomingData, int len) {
         RotateWrist(servos);
         break;
       case 4:
+        RotateWristReverse(servos);
+        break;
+      case 5:
         ToggleGripper(servos);
         break;
       default:
